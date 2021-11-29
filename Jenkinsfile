@@ -42,11 +42,11 @@ pipeline {
             }
         }
 
-    post {
-        success {
-            sh (curl -H "Content-type: application/json" \
-            --data '{"text":"Рыбалка Дмитрий собрал приложение."}' \
-            -X POST https://hooks.slack.com/services/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)
+        post {
+            success {
+                sh "curl -X POST -H \"Content-type: application/json\" \
+                --data '{"text':'Рыбалка Дмитрий собрал приложение."}' \
+                https://hooks.slack.com/services/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"
             }
         }
     }
