@@ -37,5 +37,5 @@ upload-release: # задача с именем upload-release
       curl -sSL -H "JOB-TOKEN: ${CI_JOB_TOKEN}" 
       -T sausage-store-0.0.1.zip "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/sausage-store/${CI_COMMIT_SHA}/"
     - echo "Send Slack Messages"
-    - "curl -X POST -H 'Content-type: application/json' --data '{\"text\":\"${CI_PROJECT_NAMESPACE} собрал приложение.\"}' ${SLACK_URL}"
+    - "curl -X POST -H 'Content-type: application/json' --data '{\"text\":\"Дмитрий Рыбалка собрал приложение.\"}' ${SLACK_URL}"
   
