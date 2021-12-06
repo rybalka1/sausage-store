@@ -29,7 +29,7 @@ spotbugs-sast:
   stage: test
   variables:
     COMPILE: "false"
-    MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository 
+    MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/sausage-store-0.0.1 
   artifacts:
     paths:
       - ${CI_PROJECT_DIR}/.m2/ # сохранение зависимостей для SAST
