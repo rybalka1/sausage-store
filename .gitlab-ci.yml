@@ -5,15 +5,6 @@ stages:
 include:
   - template: Security/SAST.gitlab-ci.yml  
 
-spotbugs-sast:
-  stage: build
-  variables:
-    COMPILE: "false"
-    MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository 
-  artifacts:
-    paths:
-      - ${CI_PROJECT_DIR}/.m2/ # сохранение зависимостей для SAST
-
 build-code-job:  # задача с именем build-code-job
   stage: build   # этап build
   script:        # объявление скрипта
@@ -33,6 +24,15 @@ build-code-job:  # задача с именем build-code-job
       - sausage-store-0.0.1/sausage-store-0.0.1.jar # сохранение собранного бэкенда как артефакт
     reports:
       dotenv: CI_JOB_ID.txt # сохранение файла с переменными как артефакт
+
+spotbugs-sast:
+  stage: build
+  variables:
+    COMPILE: "false"
+    MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository 
+  artifacts:
+    paths:
+      - ${CI_PROJECT_DIR}/.m2/ # сохранение зависимостей для SAST
 
 upload-release: # задача с именем upload-release
   stage: release # этап release
