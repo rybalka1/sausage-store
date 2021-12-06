@@ -27,8 +27,6 @@ build-code-job:  # задача с именем build-code-job
 
 spotbugs-sast:
   stage: test
-  tags:
-    - sast-runner
   variables:
     COMPILE: "false"
     MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository 
@@ -71,5 +69,9 @@ upload-release: # задача с именем upload-release
     - > # сохранение артефакта в package registry
       curl -sSL -H "JOB-TOKEN: ${CI_JOB_TOKEN}"
       -T sausage-store-0.0.1.zip "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/sausage-store/${CI_COMMIT_SHA}/"
+
+send-message:
+  stage: release
+  script:
     - echo "Send to slack message"
-#    - "curl -X POST -H 'Content-type: application/json' --data '{\"text\":\"Дмитрий Рыбалка собрал приложение.\"}' ${SLACK_URL}"
+    - "curl -X POST -H 'Content-type: application/json' --data '{\"text\":\"Дмитрий Рыбалка собрал приложение.\"}' ${SLACK_URL}"
