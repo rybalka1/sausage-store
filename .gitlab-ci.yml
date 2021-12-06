@@ -37,7 +37,7 @@ spotbugs-sast:
 sonarqube-check:
   stage: test
   image:
-    name: maven:3.6.3-jdk-11
+    name: sonarsource/sonar-scanner-cli:latest
     entrypoint: [""]
   variables:
     SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
@@ -48,11 +48,11 @@ sonarqube-check:
       - .sonar/cache  
   script:
   - sonar-scanner -Dsonar.qualitygate.wait=true
-  - "sonar-scanner -X \
+  - sonar-scanner \
     -Dsonar.projectKey=rybalka-dmitrii_sausage-store_AX2P24pPWyGwrBh1KdZj \
     -Dsonar.sources=. \
     -Dsonar.host.url=${SONAR_QUBE_URL} \
-    -Dsonar.login=${SONAR_QUBE_KEY}"
+    -Dsonar.login=${SONAR_QUBE_KEY}
 
 
 upload-release: # задача с именем upload-release
