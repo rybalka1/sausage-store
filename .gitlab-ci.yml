@@ -36,15 +36,19 @@ spotbugs-sast:
   
 sonarqube-check:
   stage: test
-  image:
-    name: sonarsource/sonar-scanner-cli:latest
-    entrypoint: [""]
-  script:    
-  - "sonar-scanner \
-    -Dsonar.projectKey=rybalka-dmitrii_sausage-store_AX2P24pPWyGwrBh1KdZj \
-    -Dsonar.sources=. \
-    -Dsonar.host.url=https://sonarqube.praktikum-services.ru \
-    -Dsonar.login=${SONAR_QUBE_KEY}"  
+  script:
+  - "docker run \
+    --rm \
+    -e SONAR_HOST_URL='https://sonarqube.praktikum-services.ru' \
+    -e SONAR_LOGIN='${SONAR_QUBE_KEY}' \
+    -v 'https://sonarqube.praktikum-services.ru' \
+    sonarsource/sonar-scanner-cli"
+
+#     sonar-scanner \
+#    -Dsonar.projectKey=rybalka-dmitrii_sausage-store_AX2P24pPWyGwrBh1KdZj \
+#    -Dsonar.sources=. \
+#    -Dsonar.host.url=https://sonarqube.praktikum-services.ru \
+#    -Dsonar.login=${SONAR_QUBE_KEY}"  
 
 upload-release: # задача с именем upload-release
   stage: release # этап release
