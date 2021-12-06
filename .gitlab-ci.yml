@@ -26,7 +26,7 @@ build-code-job:  # задача с именем build-code-job
       dotenv: CI_JOB_ID.txt # сохранение файла с переменными как артефакт
 
 spotbugs-sast:
-  stage: build
+  stage: test
   variables:
     COMPILE: "false"
     MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository 
