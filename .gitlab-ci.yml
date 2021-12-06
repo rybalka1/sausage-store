@@ -1,6 +1,18 @@
 stages:
   - build
+  - test
   - release
+include:
+  - template: Security/SAST.gitlab-ci.yml  
+
+spotbugs-sast:
+  stage: build
+  variables:
+    COMPILE: "false"
+    MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository 
+  artifacts:
+  paths:
+    - ${CI_PROJECT_DIR}/.m2/ # сохранение зависимостей для SAST
 
 build-code-job:  # задача с именем build-code-job
   stage: build   # этап build
