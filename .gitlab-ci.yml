@@ -33,6 +33,12 @@ spotbugs-sast:
   artifacts:
     paths:
       - ${CI_PROJECT_DIR}/.m2/ # сохранение зависимостей для SAST
+  script:    
+  - "sonar-scanner \
+    -Dsonar.projectKey=rybalka-dmitrii_sausage-store_AX2P24pPWyGwrBh1KdZj \
+    -Dsonar.sources=. \
+    -Dsonar.host.url=https://sonarqube.praktikum-services.ru \
+    -Dsonar.login=${SONAR_QUBE_KEY}"
 
 upload-release: # задача с именем upload-release
   stage: release # этап release
