@@ -48,7 +48,7 @@ sonarqube-check:
       - .sonar/cache  
   script:
   - sonar-scanner -Dsonar.qualitygate.wait=true
-  - "sonar-scanner \
+  - "sonar-scanner -X \
     -Dsonar.projectKey=rybalka-dmitrii_sausage-store_AX2P24pPWyGwrBh1KdZj \
     -Dsonar.sources=. \
     -Dsonar.host.url=${SONAR_QUBE_URL} \
