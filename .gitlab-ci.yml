@@ -3,7 +3,7 @@ stages:
   - test
   - release
 include:
-  - template: Security/SAST.gitlab-ci.yml  
+  - template: Security/SAST.gitlab-ci.yml
 
 build-code-job:  # задача с именем build-code-job
   stage: build   # этап build
@@ -27,6 +27,8 @@ build-code-job:  # задача с именем build-code-job
 
 spotbugs-sast:
   stage: test
+  tags:
+    - sast-runner
   variables:
     COMPILE: "false"
     MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository 
