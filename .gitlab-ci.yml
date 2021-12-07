@@ -65,6 +65,7 @@ sonar-backend:
   script:
     - cd backend # "Sonar"
     - mvn -X verify sonar:sonar -Dsonar.projectKey=01_rybalka_d_backend
+  allow_failure: true
 # upload-release: # задача с именем upload-release
 #   stage: release # этап release
 #   # only: # запуск этого шага только при изменениях в директориях backend и frontend
