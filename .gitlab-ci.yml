@@ -45,7 +45,7 @@ sonarqube-check:
     paths:
       - .sonar/cache
   script:
-    - sonar-scanner -Dsonar.qualitygate.wait=true
+    - sonar-scanner -Dsonar.qualitygate.wait=true -X
 
 # sonarqube-check:
 #   stage: test
