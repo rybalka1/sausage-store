@@ -1,8 +1,8 @@
 stages:
   - build
+  - test-sonar
   - test
   - release
-  - test-sonar-backend
 include:
   - template: Security/SAST.gitlab-ci.yml
 
@@ -61,7 +61,7 @@ sonar-backend:
     SONAR_TOKEN: "b5677ebacbc30c7612b6b8cc017ff9d9ed400c47"
     SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
     GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
-  stage: test-sonar-backend
+  stage: test-sonar
   script:
     - cd backend# "Sonar"
     - mvn -X verify sonar:sonar -Dsonar.projectKey=01_rybalka_d_backend
