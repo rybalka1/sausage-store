@@ -29,30 +29,30 @@ spotbugs-sast:
   stage: test
   variables:
     COMPILE: "false"
-    MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/sausage-store-0.0.1 
+    MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository
   artifacts:
     paths:
       - ${CI_PROJECT_DIR}/.m2/ # сохранение зависимостей для SAST
-  
-sonarqube-check:
-  stage: test
-  image:
-    name: sonarsource/sonar-scanner-cli:latest
-    entrypoint: [""]
-  variables:
-    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
-    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
-  cache:
-    key: "${CI_JOB_NAME}"
-    paths:
-      - .sonar/cache  
-  script:
-  - sonar-scanner -Dsonar.qualitygate.wait=true
-  - sonar-scanner \
-    -Dsonar.projectKey=rybalka-dmitrii_sausage-store_AX2P24pPWyGwrBh1KdZj \
-    -Dsonar.sources=. \
-    -Dsonar.host.url=${SONAR_QUBE_URL} \
-    -Dsonar.login=${SONAR_QUBE_KEY}
+
+# sonarqube-check:
+#   stage: test
+#   image:
+#     name: sonarsource/sonar-scanner-cli:latest
+#     entrypoint: [""]
+#   variables:
+#     SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
+#     GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+#   cache:
+#     key: "${CI_JOB_NAME}"
+#     paths:
+#       - .sonar/cache
+#   script:
+#   - sonar-scanner -Dsonar.qualitygate.wait=true
+#   - sonar-scanner \
+#     -Dsonar.projectKey=rybalka-dmitrii_sausage-store_AX2P24pPWyGwrBh1KdZj \
+#     -Dsonar.sources=. \
+#     -Dsonar.host.url=${SONAR_QUBE_URL} \
+#     -Dsonar.login=${SONAR_QUBE_KEY}
 
 
 upload-release: # задача с именем upload-release
