@@ -24,17 +24,14 @@ build-code-job:  # задача с именем build-code-job
       - sausage-store-0.0.1/public_html  # сохранение собранного фронтэнда как артефакт
       - sausage-store-0.0.1/sausage-store-0.0.1.jar # сохранение собранного бэкенда как артефакт
       - backend/sausage-store-0.0.1.jar
+      - ${CI_PROJECT_DIR}/.m2/ # сохранение зависимостей для SAST
     reports:
       dotenv: CI_JOB_ID.txt # сохранение файла с переменными как артефакт
 
-# spotbugs-sast:
-#   stage: test
-#   variables:
-#     COMPILE: "false"
-#     MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository
-#   artifacts:
-#     paths:
-#       - ${CI_PROJECT_DIR}/.m2/ # сохранение зависимостей для SAST
+spotbugs-sast:
+  variables:
+    COMPILE: "false"
+    MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository
 
 # sonarqube-check:
 #   stage: test
