@@ -31,10 +31,10 @@ spotbugs-sast:
   stage: test
   variables:
     COMPILE: "false"
-    MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository
+    MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/backend/repository
   artifacts:
     paths:
-      - ${CI_PROJECT_DIR}/.m2/ # сохранение зависимостей для SAST
+      - ${CI_PROJECT_DIR}/backend/ # сохранение зависимостей для SAST
 
 # sonarqube-check:
 #   stage: test
