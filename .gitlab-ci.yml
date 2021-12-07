@@ -63,7 +63,7 @@ sonar-backend:
     GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
   stage: test-sonar
   script:
-    - cd backend# "Sonar"
+    - cd backend # "Sonar"
     - mvn -X verify sonar:sonar -Dsonar.projectKey=01_rybalka_d_backend
 # upload-release: # задача с именем upload-release
 #   stage: release # этап release
