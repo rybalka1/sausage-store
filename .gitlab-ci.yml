@@ -34,8 +34,9 @@ spotbugs-sast:
     MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository
 
 sonarqube-check:
-  stage: test
-  image: maven:3.6.3-jdk-11
+  image:
+    name: sonarsource/sonar-scanner-cli:latest
+    entrypoint: [""]
   variables:
     SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
     GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
@@ -44,13 +45,26 @@ sonarqube-check:
     paths:
       - .sonar/cache
   script:
-  - sonar-scanner -Dsonar.qualitygate.wait=true
-  - sonar-scanner \
-    -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-    -Dsonar.sources=. \
-    -Dsonar.host.url=${SONAR_QUBE_URL} \
-    -Dsonar.login=${SONAR_QUBE_KEY}
-  - echo "XX_ИМЯФАМИЛИЯ_ФРОНТЕНД, XX_ИМЯФАМИЛИЯ_БЭКЭНД"
+    - sonar-scanner -Dsonar.qualitygate.wait=true
+
+# sonarqube-check:
+#   stage: test
+#   image: maven:3.6.3-jdk-11
+#   variables:
+#     SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
+#     GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+#   cache:
+#     key: "${CI_JOB_NAME}"
+#     paths:
+#       - .sonar/cache
+#   script:
+#   - sonar-scanner -Dsonar.qualitygate.wait=true
+#   - sonar-scanner \
+#     -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+#     -Dsonar.sources=. \
+#     -Dsonar.host.url=${SONAR_QUBE_URL} \
+#     -Dsonar.login=${SONAR_QUBE_KEY}
+#   - echo "XX_ИМЯФАМИЛИЯ_ФРОНТЕНД, XX_ИМЯФАМИЛИЯ_БЭКЭНД"
 
 upload-release: # задача с именем upload-release
   stage: release # этап release
