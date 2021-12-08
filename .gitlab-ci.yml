@@ -49,7 +49,6 @@ sonarqube-frontend:
   script:
     sonar-scanner \
       -Dsonar.projectKey=rybalka-dmitrii_sausage-store_AX2P24pPWyGwrBh1KdZj \
-      -Dsonar.sources=frontend \
       -Dsonar.host.url=https://sonarqube.praktikum-services.ru \
       -Dsonar.login=b5677ebacbc30c7612b6b8cc017ff9d9ed400c47
   allow_failure: true
