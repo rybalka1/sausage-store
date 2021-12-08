@@ -40,8 +40,8 @@ sonarqube-frontend:
     entrypoint: [""]
   variables:
     SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar" # Defines the location of the analysis task cache
-    SONAR_HOST_URL: "https://sonarqube.praktikum-services.ru"
-    SONAR_TOKEN: "b5677ebacbc30c7612b6b8cc017ff9d9ed400c47"
+    SONAR_HOST_URL: "${SONAR_HOST_URL}"
+    SONAR_TOKEN: "${SONAR_TOKEN}"
     GIT_DEPTH: "0" # Tells git to fetch all the branches of the project, required by the analysis task
   stage: test-sonar
   cache:
@@ -50,22 +50,22 @@ sonarqube-frontend:
       - .sonar/cache
   script:
     - cd frontend
-    - sonar-scanner -Dsonar.projectKey=rybalka-dmitrii_sausage-store_AX2P24pPWyGwrBh1KdZj -Dsonar.sources=.
+    - sonar-scanner -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.sources=.
   allow_failure: true
 
 sonarqube-backend:
   image:
     name: maven:3.8-openjdk-16
   variables:
-    SONAR_HOST_URL: "https://sonarqube.praktikum-services.ru"
-    SONAR_TOKEN: "b5677ebacbc30c7612b6b8cc017ff9d9ed400c47"
+    SONAR_HOST_URL: "${SONAR_HOST_URL}"
+    SONAR_TOKEN: "${SONAR_TOKEN}"
     SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar" # Defines the location of the analysis task cache
     GIT_DEPTH: "0" # Tells git to fetch all the branches of the project, required by the analysis task
   stage: test-sonar
   script:
     - cd backend
     # - mvn verify sonar:sonar -Dsonar.qualitygate.wait=true
-    - mvn -X verify sonar:sonar -Dsonar.projectKey=rybalka-dmitrii_sausage-store_AX2P24pPWyGwrBh1KdZj
+    - mvn -X verify sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY}
   allow_failure: true
 
 upload-release: # задача с именем upload-release
