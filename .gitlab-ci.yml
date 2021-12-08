@@ -47,16 +47,15 @@ sonarqube-frontend:
     paths:
       - .sonar/cache
   script:
-    cd frontend
     sonar-scanner \
       -Dsonar.projectKey=rybalka-dmitrii_sausage-store_AX2P24pPWyGwrBh1KdZj \
-      -Dsonar.sources= . \
+      -Dsonar.sources=frontend \
       -Dsonar.host.url=https://sonarqube.praktikum-services.ru \
       -Dsonar.login=b5677ebacbc30c7612b6b8cc017ff9d9ed400c47
   allow_failure: true
 
 
-sonar-backend:
+sonarqube-backend:
   image:
     name: maven:3.8-openjdk-16
   variables:
