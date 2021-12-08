@@ -49,7 +49,7 @@ sonarqube-frontend:
       - .sonar/cache
   script:
     - cd frontend
-    - sonar-scanner \
+    - sonar-scanner -X \
         -Dsonar.projectKey=rybalka-dmitrii_sausage-store_AX2P24pPWyGwrBh1KdZj \
         -Dsonar.sources=. \
         -Dsonar.host.url=https://sonarqube.praktikum-services.ru \
