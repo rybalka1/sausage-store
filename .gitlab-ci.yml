@@ -51,7 +51,7 @@ sonarqube-frontend:
     - cd frontend
     - sonar-scanner -X \
         -Dsonar.projectKey=rybalka-dmitrii_sausage-store_AX2P24pPWyGwrBh1KdZj \
-        -Dsonar.sources=. \
+        -Dsonar.sources=${CI_PROJECT_DIR} \
         -Dsonar.host.url=https://sonarqube.praktikum-services.ru \
         -Dsonar.login=b5677ebacbc30c7612b6b8cc017ff9d9ed400c47
   allow_failure: true
