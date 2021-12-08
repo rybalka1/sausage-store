@@ -47,11 +47,13 @@ sonarqube-frontend:
     key: "${CI_JOB_NAME}"
     paths:
       - .sonar/cache
-  script: sonar-scanner \
-    -Dsonar.projectKey=rybalka-dmitrii_sausage-store_AX2P24pPWyGwrBh1KdZj \
-    -Dsonar.sources=. \
-    -Dsonar.host.url=https://sonarqube.praktikum-services.ru \
-    -Dsonar.login=b5677ebacbc30c7612b6b8cc017ff9d9ed400c47
+  script:
+    - cd frontend
+    - sonar-scanner \
+        -Dsonar.projectKey=rybalka-dmitrii_sausage-store_AX2P24pPWyGwrBh1KdZj \
+        -Dsonar.sources=. \
+        -Dsonar.host.url=https://sonarqube.praktikum-services.ru \
+        -Dsonar.login=b5677ebacbc30c7612b6b8cc017ff9d9ed400c47
   allow_failure: true
 
 sonarqube-backend:
@@ -66,7 +68,8 @@ sonarqube-backend:
   stage: test-sonar
   script:
     - cd backend
-    # - mvn -X verify sonar:sonar -Dsonar.projectKey=01_rybalka_d_backend
+    # - mvn verify sonar:sonar -Dsonar.qualitygate.wait=true
+    - mvn -X verify sonar:sonar -Dsonar.projectKey=rybalka-dmitrii_sausage-store_AX2P24pPWyGwrBh1KdZj
   allow_failure: true
 
 upload-release: # задача с именем upload-release
