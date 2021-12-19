@@ -70,10 +70,10 @@ sonarqube-backend:
 
 upload-release: # задача с именем upload-release
   stage: release # этап release
-  only: # запуск этого шага только при изменениях в директориях backend и frontend
-    changes:
-      - backend//*
-      - frontend//*
+  #only: # запуск этого шага только при изменениях в директориях backend и frontend
+  #  changes:
+  #    - backend//*
+  #    - frontend//*
   script:
     - echo "Get artifact from job ${ARTIFACT_JOB_ID}"
     - > # скачивание артефакта в файл sausage-store-0.0.1.zip
