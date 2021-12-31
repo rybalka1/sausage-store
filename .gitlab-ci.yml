@@ -68,32 +68,19 @@ sonarqube-backend:
     - mvn -X verify sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY}
   allow_failure: true
 
-# upload-release: # задача с именем upload-release
-#   stage: release # этап release
-#   #only: # запуск этого шага только при изменениях в директориях backend и frontend
-#   #  changes:
-#   #    - backend//*
-#   #    - frontend//*
-#   script:
-#     - echo "Get artifact from job ${ARTIFACT_JOB_ID}"
-#     - > # скачивание артефакта в файл sausage-store-0.0.1.zip
-#       curl --location --output sausage-store-0.0.1.zip -H "PRIVATE-TOKEN: ${MY_TOKEN}"
-#       "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/jobs/${ARTIFACT_JOB_ID}/artifacts"
-#     - > # сохранение артефакта в package registry
-#       curl -sSL -H "JOB-TOKEN: ${CI_JOB_TOKEN}"
-#       -T sausage-store-0.0.1.zip "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/sausage-store/${CI_COMMIT_SHA}/"
-#     - echo "Send to slack message"
-#     - 'curl -X POST -H ''Content-type: application/json'' --data ''{"text":"Дмитрий Рыбалка собрал приложение."}'' ${SLACK_URL}'
-
-upload-release-backend:
-    stage: release
-    script:
-      - cd backend
-      - mvn -s settings.xml deploy -DskipTests
-
-upload-release-frontend:
-    stage: release
-    script:
-      - tar czvf sausage-store-${VERSION}.tar.gz sausage-store-${VERSION}
-      - >
-        curl -v -u "${NEXUS_REPO_USER}:${NEXUS_REPO_PASS}" --upload-file sausage-store-${VERSION}.tar.gz ${NEXUS_REPO_URL}/sausage-store-front/sausage-store/${VERSION}/sausage-store-${VERSION}.tar.gz
+upload-release: # задача с именем upload-release
+  stage: release # этап release
+  #only: # запуск этого шага только при изменениях в директориях backend и frontend
+  #  changes:
+  #    - backend//*
+  #    - frontend//*
+  script:
+    - echo "Get artifact from job ${ARTIFACT_JOB_ID}"
+    - > # скачивание артефакта в файл sausage-store-0.0.1.zip
+      curl --location --output sausage-store-0.0.1.zip -H "PRIVATE-TOKEN: ${MY_TOKEN}"
+      "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/jobs/${ARTIFACT_JOB_ID}/artifacts"
+    - > # сохранение артефакта в package registry
+      curl -sSL -H "JOB-TOKEN: ${CI_JOB_TOKEN}"
+      -T sausage-store-0.0.1.zip "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/sausage-store/${CI_COMMIT_SHA}/"
+    - echo "Send to slack message"
+    - 'curl -X POST -H ''Content-type: application/json'' --data ''{"text":"Дмитрий Рыбалка собрал приложение."}'' ${SLACK_URL}'
