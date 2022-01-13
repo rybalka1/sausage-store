@@ -1,0 +1,13 @@
+[Unit]
+Description=Sausage-store-frontend
+
+[Service]
+Environment=LOG_PATH=/log
+; StandardOutput=file:/log/out.log
+; StandardError=file:/log/error.log
+Restart=always
+ExecStart=/usr/bin/http-server \
+/usr/bin/http-server -p 80 --proxy http://localhost:8080
+
+[Install]
+WantedBy=multi-user.target
