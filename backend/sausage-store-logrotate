@@ -1,0 +1,9 @@
+/opt/log/sausage-store.log {
+    hourly
+    rotate 3
+    compress
+    size 10M
+    create 644 student student
+    postrotate
+        now=$(date +"%T");echo "Logrotate in : $now" >> /opt/student_rotate.log
+}

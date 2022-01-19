@@ -13,6 +13,7 @@ deploy:
     - chmod 644 ~/.ssh/known_hosts
   script:
     - scp ./backend/sausage-store-backend.service ${DEV_USER}@${MAIN_HOST}:~
+    - scp ./backend/sausage-store-logrotate ${DEV_USER}@${MAIN_HOST}:~
     - ssh ${DEV_USER}@${MAIN_HOST} "export "MAIN_HOST=${DEV_HOST}"; setsid /bin/bash -s " < ./backend/deploy.sh
   # environment:
   #   name: staging
