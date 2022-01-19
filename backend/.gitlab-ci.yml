@@ -12,8 +12,8 @@ deploy:
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
-    - ssh ${DEV_USER}@${MAIN_HOST} "uname -a; ls -la ~ "
-    # - ssh ${DEV_USER}@${DEV_HOST} "export "CURRENT_VERSION=${VERSION}"; export "VERSION=${VERSION}"; export "DEV_HOST=${DEV_HOST}";export "NEXUS_REPO_URL=${NEXUS_REPO_URL}"; export "NEXUS_REPO_USER=${NEXUS_REPO_USER}"; export "NEXUS_REPO_PASS=${NEXUS_REPO_PASS}";setsid /bin/bash -s " < ./backend/deploy.sh
+    - scp ./backend/sausage-store-backend.service ${DEV_USER}@${MAIN_HOST}:~
+    - ssh ${DEV_USER}@${MAIN_HOST} "export "MAIN_HOST=${DEV_HOST}"; setsid /bin/bash -s " < ./backend/deploy.sh
   # environment:
   #   name: staging
   #   url: https://${DEV_HOST}
