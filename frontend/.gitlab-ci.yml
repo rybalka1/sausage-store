@@ -65,6 +65,7 @@ send-message-to-slack:
     - >
       curl -X POST -H 'Content-type: application/json' --data '{"text":"Вышла новая версия сосисочной — '${VERSION}'\nСкачать фронт можно по ссылке — '${NEXUS_REPO_URL}'/repository/sausage-store-rybalka-dmitrii-frontend/sausage-store/'${VERSION}'/sausage-store-'${VERSION}'.tar.gz"}' ${SLACK_URL}
 
+
 deploy:
   stage: deploy
   before_script:
