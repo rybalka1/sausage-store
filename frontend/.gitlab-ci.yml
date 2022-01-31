@@ -1,7 +1,7 @@
 stages:
   - build
   - test-sonar
-  # - test
+  - test
   - release
   - notification
   - deploy
@@ -51,9 +51,9 @@ release:
   script:
     - tar czvf sausage-store-${VERSION}.tar.gz sausage-store-${VERSION}
     - curl -v -u "${NEXUS_REPO_USER}:${NEXUS_REPO_PASS}" --upload-file sausage-store-${VERSION}.tar.gz ${NEXUS_REPO_URL}/repository/sausage-store-rybalka-dmitrii-frontend/sausage-store/${VERSION}/sausage-store-${VERSION}.tar.gz
-  rules:
-    - changes:
-        - frontend/*
+  # rules:
+  #   - changes:
+  #       - frontend/*
 
 send-message-to-slack:
   stage: notification
@@ -64,6 +64,7 @@ send-message-to-slack:
     - echo "Send to slack message"
     - >
       curl -X POST -H 'Content-type: application/json' --data '{"text":"Вышла новая версия сосисочной — '${VERSION}'\nСкачать фронт можно по ссылке — '${NEXUS_REPO_URL}'/repository/sausage-store-rybalka-dmitrii-frontend/sausage-store/'${VERSION}'/sausage-store-'${VERSION}'.tar.gz"}' ${SLACK_URL}
+
 
 deploy:
   stage: deploy
