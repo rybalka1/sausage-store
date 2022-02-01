@@ -28,9 +28,9 @@ build:
       - ${CI_PROJECT_DIR}/.m2/
     reports:
       dotenv: CI_JOB_ID.txt
-  rules:
-    - changes:
-      - backend/*
+  # rules:
+  #   - changes:
+  #     - backend/*
 
 spotbugs-sast:
   variables:

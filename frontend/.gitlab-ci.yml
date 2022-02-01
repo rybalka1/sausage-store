@@ -23,9 +23,9 @@ build:
       - sausage-store-${VERSION}/public_html
     reports:
       dotenv: CI_JOB_ID.txt
-  rules:
-    - changes:
-        - frontend/*
+  # rules:
+  #   - changes:
+  #       - frontend/*
 
 sonarqube-frontend:
   image:
