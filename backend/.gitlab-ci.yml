@@ -70,6 +70,7 @@ send-message-to-slack:
     - >
       curl -X POST -H 'Content-type: application/json' --data '{"text":"Вышла новая версия сосисочной — '${VERSION}'\nСкачать бэкенд можно по ссылке — '${NEXUS_REPO_URL}'/repository/sausage-store-rybalka-dmitrii-backend/com/yandex/practicum/devops/sausage-store/'${VERSION}'/sausage-store-'${VERSION}'.jar"}' ${SLACK_URL}
 
+
 deploy:
   stage: deploy
   before_script:
