@@ -3,7 +3,7 @@
 set -xe
 #Перезаливаем дескриптор сервиса на ВМ для деплоя
 sudo cp -rf ./sausage-store-backend.service /etc/systemd/system/sausage-store-backend.service
-sudo cp -rf ./sausage-store-logrotate /etc/logrotate.d/sausage-store-logrotate
+# sudo cp -rf ./sausage-store-logrotate /etc/logrotate.d/sausage-store-logrotate
 sudo mkdir /opt/log |true
 sudo cp ./sausage-store-0.0.1-SNAPSHOT.jar $(pwd)/sausage-store.jar||true #"jar||true" говорит, если команда обвалится — продолжай
 # sudo chown -R jarservice.jarservice /home/jarservice/sausage-store.jar

@@ -55,15 +55,15 @@ release:
   #   - changes:
   #       - frontend/*
 
-send-message-to-slack:
-  stage: notification
-  variables:
-    GIT_STRATEGY: none
-  dependencies: []
-  script:
-    - echo "Send to slack message"
-    - >
-      curl -X POST -H 'Content-type: application/json' --data '{"text":"Вышла новая версия сосисочной — '${VERSION}'\nСкачать фронт можно по ссылке — '${NEXUS_REPO_URL}'/repository/sausage-store-rybalka-dmitrii-frontend/sausage-store/'${VERSION}'/sausage-store-'${VERSION}'.tar.gz"}' ${SLACK_URL}
+# send-message-to-slack:
+#   stage: notification
+#   variables:
+#     GIT_STRATEGY: none
+#   dependencies: []
+#   script:
+#     - echo "Send to slack message"
+#     - >
+#       curl -X POST -H 'Content-type: application/json' --data '{"text":"Вышла новая версия сосисочной — '${VERSION}'\nСкачать фронт можно по ссылке — '${NEXUS_REPO_URL}'/repository/sausage-store-rybalka-dmitrii-frontend/sausage-store/'${VERSION}'/sausage-store-'${VERSION}'.tar.gz"}' ${SLACK_URL}
 
 deploy:
   stage: deploy

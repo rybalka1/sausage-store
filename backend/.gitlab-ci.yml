@@ -60,15 +60,15 @@ release:
   #   - changes:
   #     - backend/*
 
-send-message-to-slack:
-  stage: notification
-  variables:
-    GIT_STRATEGY: none
-  dependencies: []
-  script:
-    - echo "Send to slack message"
-    - >
-      curl -X POST -H 'Content-type: application/json' --data '{"text":"Вышла новая версия сосисочной — '${VERSION}'\nСкачать бэкенд можно по ссылке — '${NEXUS_REPO_URL}'/repository/sausage-store-rybalka-dmitrii-backend/com/yandex/practicum/devops/sausage-store/'${VERSION}'/sausage-store-'${VERSION}'.jar"}' ${SLACK_URL}
+# send-message-to-slack:
+#   stage: notification
+#   variables:
+#     GIT_STRATEGY: none
+#   dependencies: []
+#   script:
+#     - echo "Send to slack message"
+#     - >
+#       curl -X POST -H 'Content-type: application/json' --data '{"text":"Вышла новая версия сосисочной — '${VERSION}'\nСкачать бэкенд можно по ссылке — '${NEXUS_REPO_URL}'/repository/sausage-store-rybalka-dmitrii-backend/com/yandex/practicum/devops/sausage-store/'${VERSION}'/sausage-store-'${VERSION}'.jar"}' ${SLACK_URL}
 
 deploy:
   stage: deploy
