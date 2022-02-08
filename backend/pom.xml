@@ -99,14 +99,6 @@
         </dependency>
     </dependencies>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-            <version>8.0.5</version>
-        </dependency>
-    </dependencies>
-
     <build>
         <plugins>
             <plugin>
