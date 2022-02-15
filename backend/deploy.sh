@@ -8,7 +8,7 @@ curl -u ${NEXUS_REPO_USER}:${NEXUS_REPO_PASS} -o sausage-store.jar ${NEXUS_REPO_
 sudo cp ./sausage-store-$VERSION.jar /home/jarservice/sausage-store.jar || true #"jar||true" говорит, если команда обвалится — продолжай
 sudo mkdir /etc/systemd/system/sausage-store-backend.service.d || true
 
-sudo cat <<EOF>  /etc/systemd/system/sausage-store-backend.service.d/override.conf
+sudo cat <<EOF >/etc/systemd/system/sausage-store-backend.service.d/override.conf
 Environment="PSQL_HOST=${PSQL_HOST}"
 Environment="PSQL_PORT=6432"
 Environment="PSQL_DBNAME=${PSQL_DBNAME}"
