@@ -12,7 +12,11 @@ ExecStart=/usr/bin/java \
 -Dmyserver.bindAddr='127.0.0.1' \
 -Dmyserver.bindPort='8080' \
 -Dmyserver.hostName='Sausage-store' \
--jar '/home/student/sausage-store-0.0.1-SNAPSHOT.jar'
+--spring.datasource.url='jdbc:postgresql://rc1a-ch60xaqh5rz5qhy0.mdb.yandexcloud.net:6432/ha-ya-practics' \
+--spring.datasource.username='student' \
+--spring.datasource.password='ha-rybalka_dmitrii' \
+--spring.flyway.baselineOnMigrate=true \
+-jar '/home/student/sausage-store.jar'
 SuccessExitStatus=143
 
 [Install]

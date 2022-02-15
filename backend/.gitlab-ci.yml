@@ -56,9 +56,9 @@ release:
   script:
     - cd backend
     - mvn deploy -DskipTests -Dversion.application=${VERSION} -Dmaven.repo.local=${MAVEN_REPO_PATH} -s settings.xml
-  # rules:
-  #   - changes:
-  #     - backend/*
+  rules:
+    - changes:
+      - backend/*
 
 # send-message-to-slack:
 #   stage: notification
