@@ -12,9 +12,10 @@ ExecStart=/usr/bin/java \
 -Dmyserver.bindAddr='127.0.0.1' \
 -Dmyserver.bindPort='8080' \
 -Dmyserver.hostName='Sausage-store' \
---spring.datasource.url='jdbc:postgresql://rc1a-ch60xaqh5rz5qhy0.mdb.yandexcloud.net:6432/ha-ya-practics' \
---spring.datasource.username='student' \
---spring.datasource.password='ha-rybalka_dmitrii' \
+--spring.datasource.url=jdbc:postgresql://$PSQL_HOST:$PSQL_PORT/$PSQL_DBNAME \
+--spring.datasource.username=$PSQL_USER \
+--spring.datasource.password=$PSQL_PASSWORD \
+--spring.data.mongodb.uri=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_URL}:27018/${MONGO_DATABASE}?tls=true \
 --spring.flyway.baselineOnMigrate=true \
 -jar '/home/student/sausage-store.jar'
 SuccessExitStatus=143
