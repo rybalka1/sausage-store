@@ -17,19 +17,19 @@ curl -u ${NEXUS_REPO_USER}:${NEXUS_REPO_PASS} -o sausage-store.jar ${NEXUS_REPO_
 sudo cp ./sausage-store-$VERSION.jar /home/jarservice/sausage-store.jar || true #"jar||true" говорит, если команда обвалится — продолжай
 touch ~/override.conf.temp || true
 echo "" > ~/override.conf.temp
-echo 'Environment="PSQL_HOST=$PSQL_HOST"' >> ~/override.conf.temp
+echo 'Environment="PSQL_HOST='$PSQL_HOST'"' >> ~/override.conf.temp
 echo 'Environment="PSQL_PORT=6432"' >> ~/override.conf.temp
-echo 'Environment="PSQL_DBNAME=$PSQL_DBNAME"' >> ~/override.conf.temp
-echo 'Environment="PSQL_USER=$PSQL_USER"' >> ~/override.conf.temp
-echo 'Environment="PSQL_PASSWORD=$PSQL_PASSWORD"' >> ~/override.conf.temp
-echo 'Environment="MONGO_USER=$MONGO_USER"' >> ~/override.conf.temp
-echo 'Environment="MONGO_PASSWORD=$MONGO_PASSWORD"' >> ~/override.conf.temp
-echo 'Environment="MONGO_URL=$MONGO_URL"' >> ~/override.conf.temp
-echo 'Environment="MONGO_DATABASE=$MONGO_DATABASE"' >> ~/override.conf.temp
+echo 'Environment="PSQL_DBNAME='$PSQL_DBNAME'"' >> ~/override.conf.temp
+echo 'Environment="PSQL_USER='$PSQL_USER'"' >> ~/override.conf.temp
+echo 'Environment="PSQL_PASSWORD='$PSQL_PASSWORD'"' >> ~/override.conf.temp
+echo 'Environment="MONGO_USER='$MONGO_USER'"' >> ~/override.conf.temp
+echo 'Environment="MONGO_PASSWORD='$MONGO_PASSWORD'"' >> ~/override.conf.temp
+echo 'Environment="MONGO_URL='$MONGO_URL'"' >> ~/override.conf.temp
+echo 'Environment="MONGO_DATABASE='$MONGO_DATABASE'"' >> ~/override.conf.temp
 
 sudo -s
 mkdir /etc/systemd/system/sausage-store-backend.service.d || true
-copy /home/student/override.conf.temp /etc/systemd/system/sausage-store-backend.service.d/override.conf
+cp /home/student/override.conf.temp /etc/systemd/system/sausage-store-backend.service.d/override.conf
 exit
 
 chown -R student:student /home/student/sausage-store.jar
