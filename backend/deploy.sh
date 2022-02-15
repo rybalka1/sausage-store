@@ -10,7 +10,6 @@ MONGO_USER=${MONGO_USER}
 MONGO_PASSWORD=${MONGO_PASSWORD}
 MONGO_URL=${MONGO_URL}
 MONGO_DATABASE=${MONGO_DATABASE}
-
 #Перезаливаем дескриптор сервиса на ВМ для деплоя
 sudo cp -rf ./sausage-store-backend.service /etc/systemd/system/sausage-store-backend.service
 curl -u ${NEXUS_REPO_USER}:${NEXUS_REPO_PASS} -o sausage-store.jar ${NEXUS_REPO_URL}//repository/sausage-store-rybalka-dmitrii-backend/com/yandex/practicum/devops/sausage-store/'${VERSION}'/sausage-store-'${VERSION}'.jar
