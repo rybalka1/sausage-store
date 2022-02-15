@@ -19,15 +19,15 @@ sudo mkdir /etc/systemd/system/sausage-store-backend.service.d || true
 sudo touch /etc/systemd/system/sausage-store-backend.service.d/override.conf
 sudo -s
 cat <<EOF >/etc/systemd/system/sausage-store-backend.service.d/override.conf
-Environment="PSQL_HOST=$PSQL_HOST"
+Environment="PSQL_HOST='$PSQL_HOST'"
 Environment="PSQL_PORT=6432"
-Environment="PSQL_DBNAME=$PSQL_DBNAME"
-Environment="PSQL_USER=$PSQL_USER"
-Environment="PSQL_PASSWORD=$PSQL_PASSWORD"
-Environment="MONGO_USER=$MONGO_USER}"
-Environment="MONGO_PASSWORD=$MONGO_PASSWORD"
-Environment="MONGO_URL=$MONGO_URL"
-Environment="MONGO_DATABASE=$MONGO_DATABASE"
+Environment="PSQL_DBNAME='$PSQL_DBNAME'"
+Environment="PSQL_USER='$PSQL_USER'"
+Environment="PSQL_PASSWORD='$PSQL_PASSWORD'"
+Environment="MONGO_USER='$MONGO_USER}'"
+Environment="MONGO_PASSWORD='$MONGO_PASSWORD'"
+Environment="MONGO_URL='$MONGO_URL'"
+Environment="MONGO_DATABASE='$MONGO_DATABASE'"
 EOF
 exit
 sudo chown -R student:student /home/student/sausage-store.jar
