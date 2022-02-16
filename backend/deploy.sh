@@ -15,17 +15,17 @@ sudo cp -rf ./sausage-store-backend.service /etc/systemd/system/sausage-store-ba
 curl -u ${NEXUS_REPO_USER}:${NEXUS_REPO_PASS} -o sausage-store.jar ${NEXUS_REPO_URL}//repository/sausage-store-rybalka-dmitrii-backend/com/yandex/practicum/devops/sausage-store/'${VERSION}'/sausage-store-'${VERSION}'.jar
 sudo cp ./sausage-store-$VERSION.jar /home/jarservice/sausage-store.jar || true #"jar||true" говорит, если команда обвалится — продолжай
 touch ~/override.conf.temp || true
-echo "" > ~/override.conf.temp
-echo 'Environment="PSQL_HOST='$PSQL_HOST'"' >> ~/override.conf.temp
-echo 'Environment="PSQL_PORT=6432"' >> ~/override.conf.temp
-echo 'Environment="PSQL_DBNAME='$PSQL_DBNAME'"' >> ~/override.conf.temp
-echo 'Environment="PSQL_USER='$PSQL_USER'"' >> ~/override.conf.temp
-echo 'Environment="PSQL_PASSWORD='$PSQL_PASSWORD'"' >> ~/override.conf.temp
-echo 'Environment="MONGO_USER='$MONGO_USER'"' >> ~/override.conf.temp
-echo 'Environment="MONGO_PASSWORD='$MONGO_PASSWORD'"' >> ~/override.conf.temp
-echo 'Environment="MONGO_URL='$MONGO_URL'"' >> ~/override.conf.temp
-echo 'Environment="MONGO_DATABASE='$MONGO_DATABASE'"' >> ~/override.conf.temp
-
+cat <<EOF > ~/override.conf.temp
+Environment="PSQL_HOST='$PSQL_HOST'"'
+Environment="PSQL_PORT=6432"
+Environment="PSQL_DBNAME='$PSQL_DBNAME'"
+Environment="PSQL_USER='$PSQL_USER'"
+Environment="PSQL_PASSWORD='$PSQL_PASSWORD'"
+Environment="MONGO_USER='$MONGO_USER'"
+Environment="MONGO_PASSWORD='$MONGO_PASSWORD'"
+Environment="MONGO_URL='$MONGO_URL'"
+Environment="MONGO_DATABASE='$MONGO_DATABASE'"
+EOF
 sudo -s
 mkdir /etc/systemd/system/sausage-store-backend.service.d || true
 cp /home/student/override.conf.temp /etc/systemd/system/sausage-store-backend.service.d/override.conf
