@@ -30,9 +30,10 @@ EOF
 sudo -s
 mkdir /etc/systemd/system/sausage-store-backend.service.d || true
 cp /home/student/sausage-unit-variables.conf.temp /etc/systemd/system/sausage-store-backend.service.d/sausage-unit-variables.conf
+sudo chmod 600 /etc/systemd/system/sausage-store-backend.service.d/sausage-unit-variables.conf
 exit
 
-chown -R student:student /home/student/sausage-store.jar
+sudo chown -R student:student /home/student/sausage-store.jar
 #Обновляем конфиг systemd с помощью рестарта
 sudo systemctl daemon-reload
 #Перезапускаем сервис сосисочной
