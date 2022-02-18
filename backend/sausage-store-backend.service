@@ -15,7 +15,7 @@ ExecStart=/usr/bin/java \
 -Dspring.datasource.username=$PSQL_USER \
 -Dspring.datasource.url=jdbc:postgresql://$PSQL_HOST:$PSQL_PORT/$PSQL_DBNAME \
 -Dspring.datasource.password=$PSQL_PASSWORD \
--Dspring.data.mongodb.uri=mongodb://$MONGO_USER:$MONGO_PASSWORD@$MONGO_URL:27018/$MONGO_DATABASE?tls=true \
+-Dspring.data.mongodb.uri=mongodb://$MONGO_USER:$MONGO_PASSWORD@$MONGO_HOSTNAME:27018/$MONGO_DATABASE?tls=true \
 -Dspring.flyway.baselineOnMigrate=true \
 -jar '/home/student/sausage-store.jar'
 SuccessExitStatus=143

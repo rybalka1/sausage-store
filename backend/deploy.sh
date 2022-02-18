@@ -8,7 +8,7 @@ PSQL_USER=${PSQL_USER}
 PSQL_PASSWORD=${PSQL_PASSWORD}
 MONGO_USER=${MONGO_USER}
 MONGO_PASSWORD=${MONGO_PASSWORD}
-MONGO_URL=${MONGO_URL}
+MONGO_HOSTNAME=${MONGO_HOSTNAME}
 MONGO_DATABASE=${MONGO_DATABASE}
 #Перезаливаем дескриптор сервиса на ВМ для деплоя
 sudo cp ./sausage-store-backend.service /etc/systemd/system/sausage-store-backend.service
@@ -24,7 +24,7 @@ Environment="PSQL_USER='$PSQL_USER'"
 Environment="PSQL_PASSWORD='$PSQL_PASSWORD'"
 Environment="MONGO_USER='$MONGO_USER'"
 Environment="MONGO_PASSWORD='$MONGO_PASSWORD'"
-Environment="MONGO_URL='$MONGO_URL'"
+Environment="MONGO_HOSTNAME='$MONGO_HOSTNAME'"
 Environment="MONGO_DATABASE='$MONGO_DATABASE'"
 EOF
 sudo -s

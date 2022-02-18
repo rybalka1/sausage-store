@@ -86,7 +86,7 @@ deploy:
       export "DEV_HOST=${DEV_HOST}";export "NEXUS_REPO_URL=${NEXUS_REPO_URL}"; export "NEXUS_REPO_USER=${NEXUS_REPO_USER}";
       export "NEXUS_REPO_PASS=${NEXUS_REPO_PASS}"; export "PSQL_HOST=${PSQL_HOST}"; export "PSQL_DBNAME=${PSQL_DBNAME}";
       export "PSQL_USER=${PSQL_USER}"; export "PSQL_PASSWORD=${PSQL_PASSWORD}"; export "MONGO_USER=${MONGO_USER}";
-      export "MONGO_PASSWORD=${MONGO_PASSWORD}"; export "MONGO_URL=${MONGO_URL}"; export "MONGO_DATABASE=${MONGO_DATABASE}";
+      export "MONGO_PASSWORD=${MONGO_PASSWORD}"; export "MONGO_HOSTNAME=${MONGO_HOSTNAME}"; export "MONGO_DATABASE=${MONGO_DATABASE}";
       setsid /bin/bash -s " < ./backend/deploy.sh
   environment:
     name: staging
