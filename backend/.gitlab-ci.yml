@@ -69,7 +69,6 @@ release:
 #     - echo "Send to slack message"
 #     - >
 #       curl -X POST -H 'Content-type: application/json' --data '{"text":"Вышла новая версия сосисочной — '${VERSION}'\nСкачать бэкенд можно по ссылке — '${NEXUS_REPO_URL}'/repository/sausage-store-rybalka-dmitrii-backend/com/yandex/practicum/devops/sausage-store/'${VERSION}'/sausage-store-'${VERSION}'.jar"}' ${SLACK_URL}
-
 deploy:
   stage: deploy
   before_script:
@@ -82,7 +81,13 @@ deploy:
     - chmod 644 ~/.ssh/known_hosts
   script:
     - scp ./backend/sausage-store-backend.service ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/sausage-store-backend.service
-    - ssh ${DEV_USER}@${DEV_HOST} "export "CURRENT_VERSION=${VERSION}"; export "VERSION=${VERSION}"; export "DEV_HOST=${DEV_HOST}";export "NEXUS_REPO_URL=${NEXUS_REPO_URL}"; export "NEXUS_REPO_USER=${NEXUS_REPO_USER}"; export "NEXUS_REPO_PASS=${NEXUS_REPO_PASS}"; export "PSQL_HOST=${PSQL_HOST}"; export "PSQL_DBNAME=${PSQL_DBNAME}"; export "PSQL_USER=${PSQL_USER}"; export "PSQL_PASSWORD=${PSQL_PASSWORD}"; export "MONGO_USER=${MONGO_USER}"; export "MONGO_PASSWORD=${MONGO_PASSWORD}"; export "MONGO_URL=${MONGO_URL}"; export "MONGO_URL=${MONGO_URL}"; export "MONGO_DATABASE=${MONGO_DATABASE}"; setsid /bin/bash -s " < ./backend/deploy.sh
+    - >
+      ssh ${DEV_USER}@${DEV_HOST} "export "CURRENT_VERSION=${VERSION}"; export "VERSION=${VERSION}";
+      export "DEV_HOST=${DEV_HOST}";export "NEXUS_REPO_URL=${NEXUS_REPO_URL}"; export "NEXUS_REPO_USER=${NEXUS_REPO_USER}";
+      export "NEXUS_REPO_PASS=${NEXUS_REPO_PASS}"; export "PSQL_HOST=${PSQL_HOST}"; export "PSQL_DBNAME=${PSQL_DBNAME}";
+      export "PSQL_USER=${PSQL_USER}"; export "PSQL_PASSWORD=${PSQL_PASSWORD}"; export "MONGO_USER=${MONGO_USER}";
+      export "MONGO_PASSWORD=${MONGO_PASSWORD}"; export "MONGO_HOSTNAME=${MONGO_HOSTNAME}"; export "MONGO_DATABASE=${MONGO_DATABASE}";
+      setsid /bin/bash -s " < ./backend/deploy.sh
   environment:
     name: staging
     url: https://${DEV_HOST}
