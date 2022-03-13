@@ -5,10 +5,13 @@ stages:
   - release
   - notification
   - deploy
+include:
+  - project: "templates/ci"
+    file: "DockerInDockerTemplate.yml"
 variables:
   VERSION: 1.0.${CI_PIPELINE_ID}
 
-build:
+build-from-nexus:
   stage: build
   script:
     - echo "ARTIFACT_JOB_ID=${CI_JOB_ID}" > CI_JOB_ID.txt
@@ -65,21 +68,64 @@ release:
 #     - >
 #       curl -X POST -H 'Content-type: application/json' --data '{"text":"Вышла новая версия сосисочной — '${VERSION}'\nСкачать фронт можно по ссылке — '${NEXUS_REPO_URL}'/repository/sausage-store-rybalka-dmitrii-frontend/sausage-store/'${VERSION}'/sausage-store-'${VERSION}'.tar.gz"}' ${SLACK_URL}
 
-deploy:
-  stage: deploy
+build-frontend:
+  stage: build
+  image: docker:20.10.12-dind-rootless
   before_script:
-    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+    - until docker info; do sleep 1; done
+    # переменные CI_REGISTRY_USER, CI_REGISTRY_PASSWORD, CI_REGISTRY генерятся Гитлабом, их задавать не надо
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - cd frontend
+    - >
+      docker build
+      --build-arg VERSION=$VERSION
+      --tag $CI_REGISTRY_IMAGE/sausage-frontend:${VERSION}
+      .
+    - docker push $CI_REGISTRY_IMAGE/sausage-frontend:${VERSION}
+
+upload-frontend-latest:
+  variables:
+    GIT_STRATEGY: none
+  image: docker:20.10.12-dind-rootless
+  stage: release
+  before_script:
+    - until docker info; do sleep 1; done
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker pull $CI_REGISTRY_IMAGE/sausage-frontend:${VERSION}
+    # если образ прошел проверки в CI (сканирование, тесты и т.д), то тегаем latest
+    - docker tag $CI_REGISTRY_IMAGE/sausage-frontend:${VERSION} $CI_REGISTRY_IMAGE/sausage-frontend:${VERSION}
+    - docker push $CI_REGISTRY_IMAGE/sausage-frontend:${VERSION}
+
+deploy-frontend:
+  stage: deploy
+  image: alpine:3.15.0
+  # если хотим сделать деплой по кнопке
+  # rules:
+  #   - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+  #     when: manual
+  #   - if: '$CI_COMMIT_BRANCH == "master"'
+  #     when: manual
+  before_script:
+    - apk add openssh-client bash
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
-    - chmod 600 ~/.ssh
+    - chmod 700 ~/.ssh
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
-    - scp ./frontend/sausage-store-frontend.service ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/sausage-store-frontend.service
-    - ssh ${DEV_USER}@${DEV_HOST} "export "CURRENT_VERSION=${VERSION}"; export "VERSION=${VERSION}"; export "DEV_HOST=${DEV_HOST}";export "NEXUS_REPO_URL=${NEXUS_REPO_URL}"; export "NEXUS_REPO_USER=${NEXUS_REPO_USER}"; export "NEXUS_REPO_PASS=${NEXUS_REPO_PASS}";setsid /bin/bash -s " < ./frontend/deploy.sh
+    - ssh ${DEV_USER}@${DEV_HOST}
+      "export "VERSION=${VERSION}";
+      export "SPRING_DATASOURCE_URL=${PSQL_DATASOURCE}";
+      export "SPRING_DATASOURCE_USERNAME=${PSQL_USER}";
+      export "SPRING_DATASOURCE_PASSWORD=${PSQL_PASSWORD}";
+      export "SPRING_DATA_MONGODB_URI=${MONGO_DATA}";
+      export "DOCKER_GITLAB_USER_NAME=${DOCKER_GITLAB_USER_NAME}";
+      export "DOCKER_GITLAB_TOCKEN=${DOCKER_GITLAB_TOCKEN}";
+      /bin/bash -s " < ./frontend/frontend_deploy.sh
   environment:
     name: staging
     url: https://${DEV_HOST}
   when: manual
-

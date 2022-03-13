@@ -1,7 +1,5 @@
-
 stages:
-  - build-jar
-  - build-docker
+  - build
   - test-sonar
   - test
   - release
@@ -9,15 +7,15 @@ stages:
   - deploy
 include:
   - template: Security/SAST.gitlab-ci.yml
-  - project: "templates/ci"
-    file: "DockerInDockerTemplate.yml"
+  - project: 'templates/ci'
+    file: 'DockerInDockerTemplate.yml'
 variables:
   VERSION: 1.0.${CI_PIPELINE_ID}
   MAVEN_REPO_PATH: ./.m2/repository
   JAVA_OPTS: -XX:MaxRAMPercentage=90
 
-build-jar:
-  stage: build-jar
+build:
+  stage: build
   script:
     - echo "ARTIFACT_JOB_ID=${CI_JOB_ID}" > CI_JOB_ID.txt
     - cd ${CI_PROJECT_DIR}/backend
@@ -55,27 +53,6 @@ sonarqube-backend:
     - mvn -X verify sonar:sonar -Dsonar.projectKey=01_rybalka_dmitrii_backend
   allow_failure: true
 
-build-backend:
-  stage: build-docker
-  image: docker:20.10.12-dind-rootless
-  before_script:
-    - until docker info; do sleep 1; done
-    # переменные CI_REGISTRY_USER, CI_REGISTRY_PASSWORD, CI_REGISTRY генерятся Гитлабом, их задавать не надо
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-  script:
-    - ls -la
-    - mv ./sausage-store-${VERSION}/sausage-store-${VERSION}.jar ./backend/sausage-store.jar
-    - cd backend
-    - ls -la
-    - >
-      docker build
-      --build-arg VERSION=$VERSION
-      --tag $CI_REGISTRY_IMAGE/sausage-backend:${VERSION}
-      .
-    - docker push $CI_REGISTRY_IMAGE/sausage-backend:${VERSION}
-  dependencies:
-    - build-jar
-
 release:
   stage: release
   script:
@@ -94,48 +71,25 @@ release:
 #     - echo "Send to slack message"
 #     - >
 #       curl -X POST -H 'Content-type: application/json' --data '{"text":"Вышла новая версия сосисочной — '${VERSION}'\nСкачать бэкенд можно по ссылке — '${NEXUS_REPO_URL}'/repository/sausage-store-rybalka-dmitrii-backend/com/yandex/practicum/devops/sausage-store/'${VERSION}'/sausage-store-'${VERSION}'.jar"}' ${SLACK_URL}
-
-upload-backend-latest:
-  variables:
-    GIT_STRATEGY: none
-  image: docker:20.10.12-dind-rootless
-  stage: release
-  before_script:
-    - until docker info; do sleep 1; done
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-  script:
-    - >
-      docker pull $CI_REGISTRY_IMAGE/sausage-backend:${VERSION} &&
-      docker tag $CI_REGISTRY_IMAGE/sausage-backend:${VERSION} $CI_REGISTRY_IMAGE/sausage-backend:${VERSION} &&
-      docker push $CI_REGISTRY_IMAGE/sausage-backend:${VERSION}
-
-deploy-backend:
+deploy:
   stage: deploy
-  image: alpine:3.15.0
-  # если хотим сделать деплой по кнопке
-  # rules:
-  #   - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-  #     when: manual
-  #   - if: '$CI_COMMIT_BRANCH == "master"'
-  #     when: manual
   before_script:
-    - apk add openssh-client bash
+    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
+    - chmod 600 ~/.ssh
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
-    - ssh ${DEV_USER}@${DEV_HOST}
-      "export "VERSION=${VERSION}";
-      export "SPRING_DATASOURCE_URL=${PSQL_DATASOURCE}";
-      export "SPRING_DATASOURCE_USERNAME=${PSQL_USER}";
-      export "SPRING_DATASOURCE_PASSWORD=${PSQL_PASSWORD}";
-      export "SPRING_DATA_MONGODB_URI=${MONGO_DATA}";
-      export "DOCKER_GITLAB_USER_NAME=${DOCKER_GITLAB_USER_NAME}";
-      export "DOCKER_GITLAB_TOCKEN=${DOCKER_GITLAB_TOCKEN}";
-      /bin/bash -s " < ./backend/backend_deploy.sh
+    - scp ./backend/sausage-store-backend.service ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/sausage-store-backend.service
+    - >
+      ssh ${DEV_USER}@${DEV_HOST} "export "CURRENT_VERSION=${VERSION}"; export "VERSION=${VERSION}";
+      export "DEV_HOST=${DEV_HOST}";export "NEXUS_REPO_URL=${NEXUS_REPO_URL}"; export "NEXUS_REPO_USER=${NEXUS_REPO_USER}";
+      export "NEXUS_REPO_PASS=${NEXUS_REPO_PASS}"; export "PSQL_HOST=${PSQL_HOST}"; export "PSQL_DBNAME=${PSQL_DBNAME}";
+      export "PSQL_USER=${PSQL_USER}"; export "PSQL_PASSWORD=${PSQL_PASSWORD}"; export "MONGO_USER=${MONGO_USER}";
+      export "MONGO_PASSWORD=${MONGO_PASSWORD}"; export "MONGO_HOSTNAME=${MONGO_HOSTNAME}"; export "MONGO_DATABASE=${MONGO_DATABASE}";
+      setsid /bin/bash -s " < ./backend/deploy.sh
   environment:
     name: staging
     url: https://${DEV_HOST}
