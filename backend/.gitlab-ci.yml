@@ -21,7 +21,7 @@ build-jar:
   script:
     - echo "ARTIFACT_JOB_ID=${CI_JOB_ID}" > CI_JOB_ID.txt
     - cd ${CI_PROJECT_DIR}/backend
-    - mvn package -Dversion.application=${VERSION} -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository
+    - mvn -X package -Dversion.application=${VERSION} -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository
     - mkdir ${CI_PROJECT_DIR}/sausage-store-${VERSION}
     - cp ${CI_PROJECT_DIR}/backend/target/sausage-store-${VERSION}.jar ${CI_PROJECT_DIR}/backend/sausage-store-${VERSION}.jar
     - mv ${CI_PROJECT_DIR}/backend/target/sausage-store-${VERSION}.jar ${CI_PROJECT_DIR}/sausage-store-${VERSION}/sausage-store-${VERSION}.jar
