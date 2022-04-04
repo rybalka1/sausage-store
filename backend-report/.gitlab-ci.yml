@@ -1,0 +1,67 @@
+
+stages:
+  - build-jar
+  - build-docker
+  - release
+  - deploy
+include:
+  - project: "templates/ci"
+    file: "DockerInDockerTemplate.yml"
+variables:
+  VERSION: 1.0.${CI_PIPELINE_ID}
+  MAVEN_REPO_PATH: ./.m2/repository
+  JAVA_OPTS: -XX:MaxRAMPercentage=90
+
+build-jar:
+  stage: build-jar
+  script:
+    - echo "ARTIFACT_JOB_ID=${CI_JOB_ID}" > CI_JOB_ID.txt
+    - cd ${CI_PROJECT_DIR}/backend-report
+    - mvn -X package -Dversion.application=${VERSION} -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository
+    - mkdir ${CI_PROJECT_DIR}/sausage-store-report-${VERSION}
+    - cp ${CI_PROJECT_DIR}/backend-report/target/sausage-store-report-${VERSION}.jar ${CI_PROJECT_DIR}/backend-report/sausage-store-report-${VERSION}.jar
+    - mv ${CI_PROJECT_DIR}/backend-report/target/sausage-store-report-${VERSION}.jar ${CI_PROJECT_DIR}/sausage-store-report-${VERSION}/sausage-store-report-${VERSION}.jar
+  artifacts:
+    paths:
+      - sausage-store-report-${VERSION}/sausage-store-report-${VERSION}.jar
+      - backend-report/sausage-store-report-${VERSION}.jar
+      - ${CI_PROJECT_DIR}/.m2/
+    reports:
+      dotenv: CI_JOB_ID.txt
+  # rules:
+  #   - changes:
+  #     - backend-report/*
+
+build-backend-report:
+  stage: build-docker
+  image: docker:20.10.12-dind-rootless
+  before_script:
+    - until docker info; do sleep 1; done
+    # переменные CI_REGISTRY_USER, CI_REGISTRY_PASSWORD, CI_REGISTRY генерятся Гитлабом, их задавать не надо
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - ls -la
+    - mv ./sausage-store-report-${VERSION}/sausage-store-report-${VERSION}.jar ./backend-report/sausage-store-report.jar
+    - cd backend-report
+    - ls -la
+    - >
+      docker build
+      --build-arg VERSION=$VERSION
+      --tag $CI_REGISTRY_IMAGE/sausage-backend-report:$VERSION
+      .
+    - docker push $CI_REGISTRY_IMAGE/sausage-backend-report:$VERSION
+  dependencies:
+    - build-jar
+
+upload-backend-report-latest:
+  stage: release
+  variables:
+    GIT_STRATEGY: none
+  image: docker:20.10.12-dind-rootless
+  before_script:
+    - until docker info; do sleep 1; done
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker pull $CI_REGISTRY_IMAGE/sausage-backend-report:${VERSION}
+    - docker tag $CI_REGISTRY_IMAGE/sausage-backend-report:${VERSION} $CI_REGISTRY_IMAGE/sausage-backend-report:latest
+    - docker push $CI_REGISTRY_IMAGE/sausage-backend-report:latest

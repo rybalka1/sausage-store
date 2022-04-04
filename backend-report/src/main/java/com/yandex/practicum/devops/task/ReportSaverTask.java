@@ -29,7 +29,7 @@ public class ReportSaverTask {
         TrustAllCerts.trustAllCerts();
         log.info("Saving report");
         Report report =
-                restTemplate.getForObject("https://d5d5ae9uc621vcf2cphm.apigw.yandexcloud.net/report", Report.class);
+                restTemplate.getForObject("https://d5dg7f2abrq3u84p3vpr.apigw.yandexcloud.net/report", Report.class);
         if (report != null) {
             reportRepository.save(report);
         } else {

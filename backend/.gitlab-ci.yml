@@ -42,6 +42,7 @@ spotbugs-sast:
     MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository
 
 sonarqube-backend:
+  stage: test-sonar
   image:
     name: maven:3.8-openjdk-16
   variables:
@@ -49,7 +50,6 @@ sonarqube-backend:
     SONAR_TOKEN: "${SONAR_TOKEN}"
     SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
     GIT_DEPTH: "0"
-  stage: test-sonar
   script:
     - cd backend
     - mvn -X verify sonar:sonar -Dsonar.projectKey=01_rybalka_dmitrii_backend
@@ -63,27 +63,17 @@ build-backend:
     # переменные CI_REGISTRY_USER, CI_REGISTRY_PASSWORD, CI_REGISTRY генерятся Гитлабом, их задавать не надо
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - ls -la
     - mv ./sausage-store-${VERSION}/sausage-store-${VERSION}.jar ./backend/sausage-store.jar
     - cd backend
     - ls -la
     - >
       docker build
       --build-arg VERSION=$VERSION
-      --tag $CI_REGISTRY_IMAGE/sausage-backend:${VERSION}
+      --tag $CI_REGISTRY_IMAGE/sausage-backend:$VERSION
       .
-    - docker push $CI_REGISTRY_IMAGE/sausage-backend:${VERSION}
+    - docker push $CI_REGISTRY_IMAGE/sausage-backend:$VERSION
   dependencies:
     - build-jar
-
-release:
-  stage: release
-  script:
-    - cd backend
-    - mvn deploy -DskipTests -Dversion.application=${VERSION} -Dmaven.repo.local=${MAVEN_REPO_PATH} -s settings.xml
-  rules:
-    - changes:
-      - backend/*
 
 # send-message-to-slack:
 #   stage: notification
@@ -104,39 +94,6 @@ upload-backend-latest:
     - until docker info; do sleep 1; done
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - >
-      docker pull $CI_REGISTRY_IMAGE/sausage-backend:${VERSION} &&
-      docker tag $CI_REGISTRY_IMAGE/sausage-backend:${VERSION} $CI_REGISTRY_IMAGE/sausage-backend:${VERSION} &&
-      docker push $CI_REGISTRY_IMAGE/sausage-backend:${VERSION}
-
-deploy-backend:
-  stage: deploy
-  image: alpine:3.15.0
-  # если хотим сделать деплой по кнопке
-  # rules:
-  #   - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-  #     when: manual
-  #   - if: '$CI_COMMIT_BRANCH == "master"'
-  #     when: manual
-  before_script:
-    - apk add openssh-client bash
-    - eval $(ssh-agent -s)
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
-  script:
-    - ssh ${DEV_USER}@${DEV_HOST}
-      "export "VERSION=${VERSION}";
-      export "SPRING_DATASOURCE_URL=${PSQL_DATASOURCE}";
-      export "SPRING_DATASOURCE_USERNAME=${PSQL_USER}";
-      export "SPRING_DATASOURCE_PASSWORD=${PSQL_PASSWORD}";
-      export "SPRING_DATA_MONGODB_URI=${MONGO_DATA}";
-      export "DOCKER_GITLAB_USER_NAME=${DOCKER_GITLAB_USER_NAME}";
-      export "DOCKER_GITLAB_TOCKEN=${DOCKER_GITLAB_TOCKEN}";
-      /bin/bash -s " < ./backend/backend_deploy.sh
-  environment:
-    name: staging
-    url: https://${DEV_HOST}
-  when: manual
+    - docker pull $CI_REGISTRY_IMAGE/sausage-backend:${VERSION}
+    - docker tag $CI_REGISTRY_IMAGE/sausage-backend:${VERSION} $CI_REGISTRY_IMAGE/sausage-backend:latest
+    - docker push $CI_REGISTRY_IMAGE/sausage-backend:latest

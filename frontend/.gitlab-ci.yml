@@ -4,7 +4,8 @@ stages:
   - test
   - release
   - notification
-  - deploy
+  - build-docker-frontend
+  - upload-frontend
 include:
   - project: "templates/ci"
     file: "DockerInDockerTemplate.yml"
@@ -31,6 +32,7 @@ build-from-nexus:
   #       - frontend/*
 
 sonarqube-frontend:
+  stage: test-sonar
   image:
     name: sonarsource/sonar-scanner-cli:latest
     entrypoint: [""]
@@ -39,7 +41,6 @@ sonarqube-frontend:
     SONAR_HOST_URL: "${SONAR_HOST_URL}"
     SONAR_TOKEN: "${SONAR_TOKEN}"
     GIT_DEPTH: "0"
-  stage: test-sonar
   cache:
     key: "${CI_JOB_NAME}"
     paths:
@@ -69,63 +70,31 @@ release:
 #       curl -X POST -H 'Content-type: application/json' --data '{"text":"Вышла новая версия сосисочной — '${VERSION}'\nСкачать фронт можно по ссылке — '${NEXUS_REPO_URL}'/repository/sausage-store-rybalka-dmitrii-frontend/sausage-store/'${VERSION}'/sausage-store-'${VERSION}'.tar.gz"}' ${SLACK_URL}
 
 build-frontend:
-  stage: build
+  stage: build-docker-frontend
   image: docker:20.10.12-dind-rootless
   before_script:
     - until docker info; do sleep 1; done
-    # переменные CI_REGISTRY_USER, CI_REGISTRY_PASSWORD, CI_REGISTRY генерятся Гитлабом, их задавать не надо
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
     - cd frontend
     - >
       docker build
       --build-arg VERSION=$VERSION
-      --tag $CI_REGISTRY_IMAGE/sausage-frontend:${VERSION}
+      --tag $CI_REGISTRY_IMAGE/sausage-frontend:$VERSION
       .
-    - docker push $CI_REGISTRY_IMAGE/sausage-frontend:${VERSION}
+    - docker push $CI_REGISTRY_IMAGE/sausage-frontend:$VERSION
+  dependencies:
+      - build-from-nexus
 
 upload-frontend-latest:
+  stage: upload-frontend
   variables:
     GIT_STRATEGY: none
   image: docker:20.10.12-dind-rootless
-  stage: release
   before_script:
     - until docker info; do sleep 1; done
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
     - docker pull $CI_REGISTRY_IMAGE/sausage-frontend:${VERSION}
-    # если образ прошел проверки в CI (сканирование, тесты и т.д), то тегаем latest
-    - docker tag $CI_REGISTRY_IMAGE/sausage-frontend:${VERSION} $CI_REGISTRY_IMAGE/sausage-frontend:${VERSION}
-    - docker push $CI_REGISTRY_IMAGE/sausage-frontend:${VERSION}
-
-deploy-frontend:
-  stage: deploy
-  image: alpine:3.15.0
-  # если хотим сделать деплой по кнопке
-  # rules:
-  #   - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-  #     when: manual
-  #   - if: '$CI_COMMIT_BRANCH == "master"'
-  #     when: manual
-  before_script:
-    - apk add openssh-client bash
-    - eval $(ssh-agent -s)
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
-  script:
-    - ssh ${DEV_USER}@${DEV_HOST}
-      "export "VERSION=${VERSION}";
-      export "SPRING_DATASOURCE_URL=${PSQL_DATASOURCE}";
-      export "SPRING_DATASOURCE_USERNAME=${PSQL_USER}";
-      export "SPRING_DATASOURCE_PASSWORD=${PSQL_PASSWORD}";
-      export "SPRING_DATA_MONGODB_URI=${MONGO_DATA}";
-      export "DOCKER_GITLAB_USER_NAME=${DOCKER_GITLAB_USER_NAME}";
-      export "DOCKER_GITLAB_TOCKEN=${DOCKER_GITLAB_TOCKEN}";
-      /bin/bash -s " < ./frontend/frontend_deploy.sh
-  environment:
-    name: staging
-    url: https://${DEV_HOST}
-  when: manual
+    - docker tag $CI_REGISTRY_IMAGE/sausage-frontend:${VERSION} $CI_REGISTRY_IMAGE/sausage-frontend:latest
+    - docker push $CI_REGISTRY_IMAGE/sausage-frontend:latest
