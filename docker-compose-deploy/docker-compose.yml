@@ -2,7 +2,7 @@ version: "3.3"
 services:
   backend:
     image: gitlab.praktikum-services.ru:5050/rybalka-dmitrii/sausage-store/sausage-backend:latest
-    container_name: sausage-backend
+    # container_name: sausage-backend
     restart: unless-stopped
     environment:
       SPRING_FLYWAY_BASELINE: "false"
@@ -26,7 +26,11 @@ services:
     container_name: sausage-frontend
     restart: unless-stopped
     ports:
-      - "8082:80"
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    environment:
+      DEFAULT_HOST: "web"
     networks:
       - sausage-store
 networks:

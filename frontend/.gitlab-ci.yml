@@ -77,24 +77,32 @@ build-frontend:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
     - cd frontend
+    - echo "folder_content"
+    - ls -alht
+    - ls -alht ..
+    - ls -alht  ../sausage-store-${VERSION}/public_html
+    - mv ../sausage-store-${VERSION}/ .
     - >
       docker build
       --build-arg VERSION=$VERSION
       --tag $CI_REGISTRY_IMAGE/sausage-frontend:$VERSION
+      --tag $CI_REGISTRY_IMAGE/sausage-frontend:latest
       .
     - docker push $CI_REGISTRY_IMAGE/sausage-frontend:$VERSION
-  dependencies:
-      - build-from-nexus
-
-upload-frontend-latest:
-  stage: upload-frontend
-  variables:
-    GIT_STRATEGY: none
-  image: docker:20.10.12-dind-rootless
-  before_script:
-    - until docker info; do sleep 1; done
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-  script:
-    - docker pull $CI_REGISTRY_IMAGE/sausage-frontend:${VERSION}
-    - docker tag $CI_REGISTRY_IMAGE/sausage-frontend:${VERSION} $CI_REGISTRY_IMAGE/sausage-frontend:latest
     - docker push $CI_REGISTRY_IMAGE/sausage-frontend:latest
+  dependencies:
+    - build-from-nexus
+
+
+# upload-frontend-latest:
+#   stage: upload-frontend
+#   variables:
+#     GIT_STRATEGY: none
+#   image: docker:20.10.12-dind-rootless
+#   before_script:
+#     - until docker info; do sleep 1; done
+#     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+#   script:
+#     - docker pull $CI_REGISTRY_IMAGE/sausage-frontend:${VERSION}
+#     - docker tag $CI_REGISTRY_IMAGE/sausage-frontend:${VERSION} $CI_REGISTRY_IMAGE/sausage-frontend:latest
+#     - docker push $CI_REGISTRY_IMAGE/sausage-frontend:latest
