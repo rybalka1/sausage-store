@@ -1,18 +1,41 @@
-version: "3.3"
+version: "3.4"
 services:
-  backend:
-    image: gitlab.praktikum-services.ru:5050/rybalka-dmitrii/sausage-store/sausage-backend:latest
-    # container_name: sausage-backend
+  sausage-backend-blue:
+    image: ${BACKEND_IMAGE_URL}
+    container_name: sausage-backend-blue
     restart: unless-stopped
     environment:
       SPRING_FLYWAY_BASELINE: "false"
       SPRING_CLOUD_VAULT_HOST: ${VAULT_HOST}
       SPRING_CLOUD_VAULT_TOKEN: ${VAULT_TOKEN}
-      REPORT_PATH: ${REPORT_PATH}
+      VIRTUAL_HOST: "web"
     networks:
       - sausage-store
+    healthcheck:
+      test: curl --fail -s http://localhost:8080/actuator/health
+      interval: 30s
+      timeout: 10s
+      start_period: 20s
+      retries: 15
+  sausage-backend-green:
+    image: ${BACKEND_IMAGE_URL}
+    container_name: sausage-backend-green
+    restart: unless-stopped
+    environment:
+      SPRING_FLYWAY_BASELINE: "false"
+      SPRING_CLOUD_VAULT_HOST: ${VAULT_HOST}
+      SPRING_CLOUD_VAULT_TOKEN: ${VAULT_TOKEN}
+      VIRTUAL_HOST: "web"
+    networks:
+      - sausage-store
+    healthcheck:
+      test: curl --fail -s http://localhost:8080/actuator/health
+      interval: 30s
+      timeout: 10s
+      start_period: 20s
+      retries: 15
   report:
-    image: gitlab.praktikum-services.ru:5050/rybalka-dmitrii/sausage-store/sausage-backend-report:latest
+    image: ${BACKEND_REPORT_IMAGE_URL}
     container_name: sausage-backend-report
     restart: unless-stopped
     environment:
@@ -22,7 +45,7 @@ services:
     networks:
       - sausage-store
   frontend:
-    image: gitlab.praktikum-services.ru:5050/rybalka-dmitrii/sausage-store/sausage-frontend:latest
+    image: ${FRONTEND_IMAGE_URL}
     container_name: sausage-frontend
     restart: unless-stopped
     ports:
