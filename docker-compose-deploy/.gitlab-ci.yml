@@ -49,4 +49,7 @@ deploy-docker-compose:
       export "BACKEND_IMAGE_URL=${CI_REGISTRY_IMAGE_BACKEND}";
       export "BACKEND_REPORT_IMAGE_URL=${CI_REGISTRY_IMAGE_FRONTEND}";
       export "FRONTEND_IMAGE_URL=${CI_REGISTRY_IMAGE_FRONTEND}";
+      export"VIRTUAL_HOST=${VIRTUAL_HOST}";
+      export "VIRTUAL_PORT=${VIRTUAL_PORT}";
+      export "DEFAULT_HOST=${DEFAULT_HOST}";
       /bin/bash -s " < ./docker-compose-deploy/docker-compose-deploy.sh
