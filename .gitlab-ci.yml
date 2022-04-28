@@ -1,42 +1,15 @@
+variables:
+  VERSION: 1.0.${CI_PIPELINE_ID}
+
 stages:
   - module-pipelines
-  - docker-compose-deploy
 
-frontend:
+kubernetes:
   stage: module-pipelines
   trigger:
     include:
-      - "/frontend/.gitlab-ci.yml"
-    strategy: depend #depend нужен, если какой-нибудь дочерний пайплайн свалился, мы знали, что общий пайплайн тоже идёт с ошибкой
-  only:
-    changes: #как только происходит изменение в папке frontend, запускается дочерний пайплайн, который лежит в этой папке
-      - frontend/**/*
-
-backend:
-  stage: module-pipelines
-  trigger:
-    include:
-      - "/backend/.gitlab-ci.yml"
-    strategy: depend
-  only:
-    changes:  #как только происходит изменение в папке backend, запускается дочерний пайплайн, который лежит в этой папке
-      - backend/**/*
-
-backend_report:
-  stage: module-pipelines
-  trigger:
-    include:
-      - "/backend-report/.gitlab-ci.yml"
+      - "/kubernetes/.gitlab-ci.yml"
     strategy: depend
   only:
     changes:
-      - backend-report/**/*
-
-
-deploy:
-  stage: docker-compose-deploy
-  trigger:
-    include:
-      - "docker-compose-deploy/.gitlab-ci.yml"
-    strategy: depend
-  when: manual
+      - kubernetes/**/*
