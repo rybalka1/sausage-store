@@ -1,0 +1,18 @@
+backend: # Это имя чарта из dependencies
+  image: gitlab.praktikum-services.ru:5050/rybalka-dmitrii/sausage-store/sausage-backend:latest
+  replicas: 5
+  revisionHistoryLimit: 15
+  vault_host: 51.250.70.5
+
+frontend:
+  image: gitlab.praktikum-services.ru:5050/rybalka-dmitrii/sausage-store/sausage-frontend:latest
+  fqdn: rybalka-dmitrii-01.k8s.praktikum-services.tech
+  replicas: 1
+  revisionHistoryLimit: 15
+  vault_host: 51.250.70.5
+
+backend-report:
+  image: gitlab.praktikum-services.ru:5050/rybalka-dmitrii/sausage-store/sausage-backend-report:latest
+  replicas: 1
+  revisionHistoryLimit: 15
+  vault_host: 51.250.70.5

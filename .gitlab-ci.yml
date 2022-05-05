@@ -4,12 +4,13 @@ variables:
 stages:
   - module-pipelines
 
-kubernetes:
+helm-kubernetes:
   stage: module-pipelines
   trigger:
     include:
-      - "/kubernetes/.gitlab-ci.yml"
+      - "/sausage-store-chart/.gitlab-ci.yml"
     strategy: depend
   only:
     changes:
-      - kubernetes/**/*
+      - sausage-store-chart/**/*
+

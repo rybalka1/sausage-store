@@ -1,0 +1,61 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }} 
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: sausage-store
+    app.kubernetes.io/instance: "{{ .Release.Name }}"
+    app.kubernetes.io/version: "{{ .Chart.AppVersion }}"
+    app.kubernetes.io/managed-by: "{{ .Release.Service }}"
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    app.kubernetes.io/component: {{ .Chart.Name }}
+    app.kubernetes.io/part-of: sausage-store
+    env: "{{ .Values.environment }}"
+    app: {{ .Chart.Name }}
+spec:
+  replicas: {{ .Values.replicas }} 
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }} 
+  # Стратегия развёртывания. Recreate — удалит сначала все старые поды 
+  # Есть и более гибкая стратегии, например, RollingUpdate, которая будет обновлять поды порциями  
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 4
+      maxSurge: 20%
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image }}" 
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: VAULT_HOST
+              value: "{{ .Values.vault_host }}" 
+            - name: VAULT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: vault
+                  key: vault_token
+            - name: SPRING_FLYWAY_BASELINE-ON-MIGRATE
+              value: "true"
+          ports:
+            - name: {{ .Chart.Name }}
+              containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            timeoutSeconds: 1
+            failureThreshold: 6
+      imagePullSecrets:
+        - name: docker-config-secret
