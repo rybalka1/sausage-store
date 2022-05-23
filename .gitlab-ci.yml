@@ -10,6 +10,6 @@ kubernetes:
     include:
       - "/kubernetes/.gitlab-ci.yml"
     strategy: depend
-  only:
-    changes:
-      - kubernetes/**/*
+  # only:
+  #   changes:
+  #     - kubernetes/**/*
