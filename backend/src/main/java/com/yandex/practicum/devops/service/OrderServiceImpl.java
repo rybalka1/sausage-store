@@ -12,9 +12,11 @@ import java.time.LocalDate;
 public class OrderServiceImpl implements OrderService {
 
     private OrderRepository orderRepository;
+    private BusinessMetricsService metricsService;
 
-    public OrderServiceImpl(OrderRepository orderRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository, BusinessMetricsService metricsService) {
         this.orderRepository = orderRepository;
+        this.metricsService = metricsService;
     }
 
     @Override
@@ -25,12 +27,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order create(Order order) {
         order.setDateCreated(LocalDate.now());
-
-        return this.orderRepository.save(order);
+        metricsService.initOrderCounters();
+        Order o = this.orderRepository.save(order);
+        metricsService.orderSausage(o);
+        return o;
     }
 
     @Override
     public void update(Order order) {
         this.orderRepository.save(order);
+        metricsService.orderSausage(order);
+
     }
 }
