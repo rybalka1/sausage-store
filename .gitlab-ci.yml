@@ -3,7 +3,7 @@ variables:
 
 stages:
   - module-pipelines
-
+  - kubernetes-pipelines
 
 frontend:
   stage: module-pipelines
@@ -37,7 +37,7 @@ backend_report:
 
 
 kubernetes:
-  stage: module-pipelines
+  stage: kubernetes-pipelines
   trigger:
     include:
       - "/kubernetes/.gitlab-ci.yml"
