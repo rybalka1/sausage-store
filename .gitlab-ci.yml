@@ -4,6 +4,38 @@ variables:
 stages:
   - module-pipelines
 
+
+frontend:
+  stage: module-pipelines
+  trigger:
+    include:
+      - "/frontend/.gitlab-ci.yml"
+    strategy: depend
+  # only:
+  #   changes:
+  #     - frontend/**/*
+
+backend:
+  stage: module-pipelines
+  trigger:
+    include:
+      - "/backend/.gitlab-ci.yml"
+    strategy: depend
+  # only:
+  #   changes:
+  #     - backend/**/*
+
+backend_report:
+  stage: module-pipelines
+  trigger:
+    include:
+      - "/backend-report/.gitlab-ci.yml"
+    strategy: depend
+  # only:
+  #   changes:
+  #     - backend-report/**/*
+
+
 kubernetes:
   stage: module-pipelines
   trigger:
